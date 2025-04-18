@@ -1,4 +1,4 @@
 export default function Home() {
     
-    return <h1>Testando é o que?</h1>
+    return <h1>Teste de carga</h1>
 }
