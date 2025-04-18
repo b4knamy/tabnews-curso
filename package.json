@@ -2,10 +2,9 @@
   "name": "tabnews-curso",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "pages/index.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build"
+    "dev": "next dev"
   },
   "author": "",
   "license": "MIT",
