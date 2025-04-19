@@ -2,7 +2,7 @@
   "name": "tabnews-curso",
   "version": "1.0.0",
   "description": "",
-  "main": "pages/index.js",
+  "main": "index.js",
   "scripts": {
     "dev": "next dev"
   },
