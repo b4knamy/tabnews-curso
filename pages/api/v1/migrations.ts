@@ -7,28 +7,40 @@ export default async function (
   request: NextApiRequest,
   response: NextApiResponse,
 ) {
-  if (!["GET", "POST"].includes(request.method)) {
+  const allowedMethods = ["GET", "POST"];
+
+  if (!allowedMethods.includes(request.method)) {
     return response.status(405).end();
   }
+
   const dbClient = await database.getNewClient();
 
   const migrationConfig: RunnerOption = {
     dbClient: dbClient,
     dir: resolve("infra", "migrations"),
     direction: "up",
-    dryRun: request.method === "GET",
+    dryRun: true,
     verbose: true,
     migrationsTable: "pgmigrations",
   };
 
-  const migrationsRunned = await migrationsRunner(migrationConfig);
-  dbClient.end();
+  if (request.method === "POST") {
+    const migratedMigrations = await migrationsRunner({
+      ...migrationConfig,
+      dryRun: false,
+    });
+    await dbClient.end();
 
-  let status = 200;
+    let status = 200;
+    if (migratedMigrations.length > 0) {
+      status = 201;
+    }
 
-  if (request.method === "POST" && migrationsRunned.length > 0) {
-    status = 201;
+    return response.status(status).send(migratedMigrations);
   }
 
-  return response.status(status).send(migrationsRunned);
+  const pendingMigrations = await migrationsRunner(migrationConfig);
+  await dbClient.end();
+
+  return response.status(200).send(pendingMigrations);
 }
