@@ -10,10 +10,10 @@ const clientConfig = {
 };
 
 const query = async (queryObject: string | QueryConfig) => {
-  const client = new Client(clientConfig);
-  await client.connect();
+  let client;
 
   try {
+    client = await getNewClient();
     const query = await client.query(queryObject);
     return query;
   } catch (err) {
@@ -23,6 +23,12 @@ const query = async (queryObject: string | QueryConfig) => {
   }
 };
 
+const getNewClient = async () => {
+  const client = new Client(clientConfig);
+  await client.connect();
+  return client;
+};
+
 function getSSLValues() {
   if (process.env.POSTGRES_CA) {
     return {
@@ -30,9 +36,10 @@ function getSSLValues() {
     };
   }
 
-  return process.env.NODE_ENV !== "development";
+  return process.env.NODE_ENV === "production";
 }
 
 export default {
   query,
+  getNewClient,
 };
