@@ -1,7 +1,7 @@
 import database from "infra/database";
 import { NextApiRequest, NextApiResponse } from "next";
 import migrationsRunner, { RunnerOption } from "node-pg-migrate";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 
 export default async function (
   request: NextApiRequest,
