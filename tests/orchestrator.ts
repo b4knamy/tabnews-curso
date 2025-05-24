@@ -3,11 +3,15 @@ import database from "infra/database";
 const waitForWebServer = async () => {
   const tryFetchStatusPage = async () => {
     const response = await fetch("http://localhost:3000/api/v1/status");
-    await response.json();
+
+    if (response.status !== 200) {
+      throw Error();
+    }
   };
 
   return retry(tryFetchStatusPage, {
     retries: 100,
+    maxTimeout: 1000,
   });
 };
 
