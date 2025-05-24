@@ -1,9 +1,7 @@
-import database from "infra/database";
+import orchestrator from "tests/orchestrator";
 
 beforeAll(async () => {
-  await database.query(
-    "drop schema if exists public cascade; create schema public;",
-  );
+  await orchestrator.waitForAllServices();
 });
 
 test("GET api/v1/status should return 200 status", async () => {

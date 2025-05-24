@@ -1,9 +1,8 @@
-import database from "infra/database";
+import database from "infra/database.ts";
+import orchestrator from "tests/orchestrator.ts";
 
 beforeAll(async () => {
-  await database.query(
-    "drop schema if exists public cascade; create schema public;",
-  );
+  await orchestrator.waitForAllServices();
 });
 
 test("POST api/v1/migrations should return 200 and 201 status", async () => {
