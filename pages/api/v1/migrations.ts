@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import migrationsRunner, { RunnerOption } from "node-pg-migrate";
 import { resolve } from "node:path";
 
-export default async function (
+export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse,
 ) {

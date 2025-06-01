@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import database from "infra/database.ts";
 
-export default async function (
+export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse,
 ) {
