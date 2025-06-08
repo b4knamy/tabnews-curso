@@ -19,7 +19,8 @@
     "migration:create": "npm run wait:database && node-pg-migrate -m infra/migrations create",
     "migration:up": "npm run wait:database && node-pg-migrate -m infra/migrations --envPath .env.development up",
     "migration:down": "node-pg-migrate -m infra/migrations --envPath .env.development down",
-    "reset:dep": "rm -r node_modules; rm package-lock.json; rm -r .next; npm i; clear;"
+    "prepare": "husky",
+    "commit": "cz"
   },
   "author": "",
   "license": "MIT",
@@ -34,16 +35,26 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@types/jest": "^29.5.14",
     "@types/pg": "^8.11.13",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "commitizen": "^4.3.1",
     "concurrently": "^9.1.2",
+    "cz-conventional-changelog": "3.3.0",
     "eslint": "^9.28.0",
     "eslint-config-next": "15.3.3",
     "eslint-config-prettier": "^10.1.5",
+    "husky": "^9.1.7",
     "prettier": "^3.5.3",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
