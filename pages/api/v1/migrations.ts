@@ -45,6 +45,6 @@ export default async function handler(
   } catch (error) {
     console.error(error);
   } finally {
-    await dbClient.end();
+    await dbClient?.end();
   }
 }

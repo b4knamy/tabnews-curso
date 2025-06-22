@@ -1,19 +1,23 @@
 import retry from "async-retry";
 import database from "infra/database";
 
-const waitForWebServer = async () => {
-  const tryFetchStatusPage = async () => {
-    const response = await fetch("http://localhost:3000/api/v1/status");
+const waitForAllServices = async () => {
+  const waitForWebServer = () => {
+    const tryFetchStatusPage = async () => {
+      const response = await fetch("http://localhost:3000/api/v1/status");
 
-    if (response.status !== 200) {
-      throw Error();
-    }
+      if (response.status !== 200) {
+        throw Error();
+      }
+    };
+
+    return retry(tryFetchStatusPage, {
+      retries: 100,
+      maxTimeout: 1000,
+    });
   };
 
-  return retry(tryFetchStatusPage, {
-    retries: 100,
-    maxTimeout: 1000,
-  });
+  await waitForWebServer();
 };
 
 const clearDatabase = async () => {
@@ -22,13 +26,15 @@ const clearDatabase = async () => {
   );
 };
 
-const waitForAllServices = async () => {
-  await waitForWebServer();
+const waitForAll = async () => {
+  await waitForAllServices();
   await clearDatabase();
 };
 
 const orchestrator = {
   waitForAllServices,
+  clearDatabase,
+  waitForAll,
 };
 
 export default orchestrator;
