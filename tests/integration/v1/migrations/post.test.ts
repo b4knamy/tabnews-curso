@@ -2,7 +2,7 @@ import database from "infra/database.ts";
 import orchestrator from "tests/orchestrator.ts";
 
 beforeAll(async () => {
-  await orchestrator.waitForAllServices();
+  await orchestrator.waitForAll();
 });
 
 test("POST api/v1/migrations should return 200 and 201 status", async () => {
