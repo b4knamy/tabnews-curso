@@ -1,10 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import database from "infra/database.ts";
+import { createRouter } from "next-connect";
+import controller from "infra/controller";
 
-export default async function handler(
-  request: NextApiRequest,
-  response: NextApiResponse,
-) {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+router.get(getHandler);
+
+export default router.handler(controller);
+
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
   const updatedAt = new Date().toISOString();
   const maxConnectionResult = await database.query("SHOW max_connections;");
   const versionResult = await database.query("SHOW server_version;");
