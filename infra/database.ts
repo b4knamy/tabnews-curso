@@ -1,4 +1,5 @@
 import { Client, QueryConfig } from "pg";
+import { ServiceError } from "./errors";
 
 const clientConfig = {
   host: process.env.POSTGRES_HOST,
@@ -16,17 +17,27 @@ const query = async (queryObject: string | QueryConfig) => {
     client = await getNewClient();
     const query = await client.query(queryObject);
     return query;
-  } catch (err) {
-    console.log(`\nDATABASE ERROR: ${err}\n`);
+  } catch (error) {
+    throw new ServiceError({
+      message: "Failed to execute a query in the database",
+      cause: error,
+    });
   } finally {
-    await client.end();
+    await client?.end();
   }
 };
 
 const getNewClient = async () => {
-  const client = new Client(clientConfig);
-  await client.connect();
-  return client;
+  try {
+    const client = new Client(clientConfig);
+    await client.connect();
+    return client;
+  } catch (error) {
+    throw new ServiceError({
+      message: "Failed to connect with database",
+      cause: error,
+    });
+  }
 };
 
 function getSSLValues() {
