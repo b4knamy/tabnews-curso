@@ -1,58 +1,28 @@
 import controller from "infra/controller";
-import database from "infra/database";
+import migrator from "infra/models/migrator";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
-import migrationsRunner, { RunnerOption } from "node-pg-migrate";
-import { resolve } from "node:path";
+
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
+  const pendingMigrations = await migrator.listPendingMigrations();
+
+  return response.status(200).send(pendingMigrations);
+}
+
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
+  const migratedMigrations = await migrator.runPendingMigrations();
+
+  let status = 200;
+  if (migratedMigrations.length > 0) {
+    status = 201;
+  }
+
+  return response.status(status).send(migratedMigrations);
+}
+
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler);
 router.post(postHandler);
 
 export default router.handler(controller);
-
-const migrationsConfig: Omit<RunnerOption, "dbClient"> = {
-  dir: resolve("infra", "migrations"),
-  direction: "up",
-  dryRun: true,
-  verbose: true,
-  migrationsTable: "pgmigrations",
-};
-
-async function getHandler(request: NextApiRequest, response: NextApiResponse) {
-  let dbClient;
-
-  try {
-    dbClient = await database.getNewClient();
-
-    const pendingMigrations = await migrationsRunner({
-      ...migrationsConfig,
-      dbClient,
-    });
-
-    return response.status(200).send(pendingMigrations);
-  } finally {
-    await dbClient?.end();
-  }
-}
-
-async function postHandler(request: NextApiRequest, response: NextApiResponse) {
-  let dbClient;
-
-  try {
-    dbClient = await database.getNewClient();
-    const migratedMigrations = await migrationsRunner({
-      ...migrationsConfig,
-      dbClient,
-      dryRun: false,
-    });
-
-    let status = 200;
-    if (migratedMigrations.length > 0) {
-      status = 201;
-    }
-    return response.status(status).send(migratedMigrations);
-  } finally {
-    await dbClient?.end();
-  }
-}
