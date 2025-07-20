@@ -4,7 +4,7 @@ import migrationsRunner from "node-pg-migrate";
 import { resolve } from "node:path";
 
 const runMigrations = async (options?: runMigrationsOptions) => {
-  let dbClient = await database.getNewClient();
+  const dbClient = await database.getNewClient();
 
   try {
     return await migrationsRunner({

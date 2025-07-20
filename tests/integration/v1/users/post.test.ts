@@ -1,4 +1,3 @@
-import database from "infra/database";
 import orchestrator from "tests/orchestrator.ts";
 import { version as uuidVersion } from "uuid";
 
